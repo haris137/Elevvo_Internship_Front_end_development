@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Hamburger Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f0f0;
+        }
+
+        a {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .mainH {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: #333;
+        }
+
+        /* Enhanced Hamburger Styling */
+        .hamburger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+            margin: 3px 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-radius: 2px;
+        }
+
+        /* Animation for open state */
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+            background-color: #e74c3c;
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+            background-color: #e74c3c;
+        }
+
+        /* Sidebar Container */
+        .container {
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(135deg, #f19925 0%, #f52f2f 100%);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: -280px;
+            transition: left 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 999;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.3);
+        }
+
+        .container.open {
+            left: 0;
+        }
+
+        .logo-container {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        .cross {
+            font-size: 24px;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .cross:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .sidebar {
+            padding: 30px 20px;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .links a {
+            padding: 15px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .links a:hover::before {
+            left: 100%;
+        }
+
+        .links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(10px);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="mainH">Enhanced Sidebar</h1>
+
+    <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <div class="logo-container">
+            <div class="logo">LOGO</div>
+            <div class="cross">×</div>
+        </div>
+        <div class="sidebar">
+            <div class="links">
+                <a href="#"><p>🏠 Home</p></a>
+                <a href="#"><p>🛍️ Store</p></a>
+                <a href="#"><p>ℹ️ About us</p></a>
+                <a href="#"><p>📞 Contact us</p></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const container = document.querySelector('.container');
+        const cross = document.querySelector('.cross');
+        const overlay = document.querySelector('.overlay');
+        let isOpen = false;
+
+        function toggleMenu() {
+            isOpen = !isOpen;
+            hamburger.classList.toggle('active');
+            container.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        hamburger.addEventListener('click', toggleMenu);
+        cross.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Close menu when clicking on links
+        document.querySelectorAll('.links a').forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+    </script>
+</body>
+</html>
